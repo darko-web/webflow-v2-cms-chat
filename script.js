@@ -562,11 +562,34 @@ document.addEventListener("DOMContentLoaded", () => {
       lastSubmissionTime = now;
       submissionCount++;
       
+      // Collect additional context
+      const pageUrl = window.location.href;
+      const pagePath = window.location.pathname;
+      const referrer = document.referrer || 'direct';
+      const userAgent = navigator.userAgent;
+      const screenWidth = window.screen.width;
+      const screenHeight = window.screen.height;
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const language = navigator.language || navigator.userLanguage;
+      const isMobile = window.innerWidth <= 768;
+      const deviceType = isMobile ? 'mobile' : (window.innerWidth <= 1024 ? 'tablet' : 'desktop');
+      
       const params = new URLSearchParams({
         intent: trimmedValue,
         timestamp: new Date().toISOString(),
         source: "Everday Webflow Chat Form",
         session_id: sessionStorage.getItem('chat_session_id') || 'unknown',
+        page_url: pageUrl,
+        page_path: pagePath,
+        referrer: referrer,
+        user_agent: userAgent,
+        screen_width: screenWidth.toString(),
+        screen_height: screenHeight.toString(),
+        timezone: timezone,
+        language: language,
+        device_type: deviceType,
+        viewport_width: window.innerWidth.toString(),
+        viewport_height: window.innerHeight.toString(),
       });
       
       console.log('🚀 Sending to Zapier:', {
