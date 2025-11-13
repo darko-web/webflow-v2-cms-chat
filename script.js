@@ -518,7 +518,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    const ZAPIER_URL = "https://hooks.zapier.com/hooks/catch/7023140/uiwb1ix/";
+    const ZAPIER_URL = "https://hooks.zapier.com/hooks/catch/7023140/u88hm6c/";
     
     // Rate limiting and security
     let lastSubmissionTime = 0;
