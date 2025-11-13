@@ -518,7 +518,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    const ZAPIER_URL = "https://hooks.zapier.com/hooks/catch/7023140/u5svqi0/";
+    const ZAPIER_URL = "https://hooks.zapier.com/hooks/catch/https://hooks.zapier.com/hooks/catch/7023140/uiwb1ix//";
     async function sendToZapier(intentValue) {
       const params = new URLSearchParams({
         intent: intentValue,
