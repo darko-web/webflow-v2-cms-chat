@@ -1,73 +1,7 @@
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script>
 document.addEventListener("DOMContentLoaded", () => {
   (() => {
-    // Inject critical styles inline to override Webflow's CSS
-    const style = document.createElement("style");
-    style.textContent = `
-      .predictive-search.conversation-started,
-      .w-input.predictive-search.conversation-started,
-      .w-input[readonly].predictive-search.conversation-started,
-      .w-input[readonly].w-input.predictive-search.conversation-started {
-        background:rgb(255, 255, 255) !important;
-        background-color: rgb(255, 255, 255) !important;
-        border: 1px solid #A8A8A8 !important;
-        margin: 1rem;
-        padding: 1rem;
-        width: 80%;
-        border-radius: 0px 1rem 1rem 1rem;
-        transition: all 0.3s ease;
-        min-height: auto !important;
-        height: auto !important;
-      }
-      .predictive-search.conversation-started[readonly],
-      .predictive-search.conversation-started[readonly]:focus,
-      .w-input.predictive-search.conversation-started[readonly],
-      .w-input.predictive-search.conversation-started[readonly]:focus,
-      .w-input[readonly].predictive-search.conversation-started,
-      .w-input[readonly].predictive-search.conversation-started:focus,
-      .w-input[readonly].w-input.predictive-search.conversation-started,
-      .w-input[readonly].w-input.predictive-search.conversation-started:focus {
-        background:rgb(255, 255, 255) !important;
-        background-color: rgb(255, 255, 255) !important;
-        border: 1.5px solid #E0E0E0 !important;
-        outline: none !important;
-      }
-      #intent.conversation-started,
-      .w-input#intent.conversation-started,
-      .w-input[readonly]#intent.conversation-started,
-      .w-input[readonly].w-input#intent.conversation-started {
-        background:rgb(255, 255, 255) !important;
-        background-color: rgb(255, 255, 255) !important;
-        border: 1px solid #A8A8A8 !important;
-        margin: 1rem;
-        padding: 1rem;
-        width: 70%;
-        border-radius: 0px 1rem 1rem 1rem;
-        transition: all 0.3s ease;
-        min-height: auto !important;
-        height: auto !important;
-      }
-      #intent.conversation-started[readonly],
-      #intent.conversation-started[readonly]:focus,
-      .w-input#intent.conversation-started[readonly],
-      .w-input#intent.conversation-started[readonly]:focus,
-      .w-input[readonly]#intent.conversation-started,
-      .w-input[readonly]#intent.conversation-started:focus,
-      .w-input[readonly].w-input#intent.conversation-started,
-      .w-input[readonly].w-input#intent.conversation-started:focus {
-        background:rgb(255, 255, 255) !important;
-        background-color: rgb(255, 255, 255) !important;
-        border: 1.5px solid #E0E0E0 !important;
-        outline: none !important;
-      }
-      .predictive-search {
-        transition: all 0.3s ease;
-      }
-      #intent {
-        transition: all 0.3s ease;
-      }
-    `;
-    document.head.appendChild(style);
-
     const categories = document.querySelectorAll(".category-btn");
     const questions = document.querySelectorAll(".question-item");
     const categoriesContainer = document.querySelector(".categories-collection");
@@ -128,6 +62,168 @@ document.addEventListener("DOMContentLoaded", () => {
         opacity: "0",
       });
     });
+
+    const style = document.createElement("style");
+    style.textContent = `
+      .predictive-search.conversation-started {
+        background:rgb(255, 255, 255) !important;
+        border: 1px solid #A8A8A8 !important;
+        margin: 1rem;
+        padding: 1rem;
+        width: 80%;
+        border-radius: 0px 1rem 1rem 1rem;
+        transition: all 0.3s ease;
+        min-height: auto !important;
+        height: auto !important;
+      }
+      .predictive-search.conversation-started[readonly],
+      .predictive-search.conversation-started[readonly]:focus {
+        border: 1.5px solid #E0E0E0 !important;
+        outline: none !important;
+      }
+      #intent {
+        width: auto;
+      }
+      #intent::placeholder {
+        color: #807A74 !important;
+      }
+      .suggested-questions.is-open {
+        background-color: rgba(255, 244, 233, 0.35) !important;
+        backdrop-filter: blur(6px) !important;
+        border-radius: 12px !important;
+        border-style: solid;
+        border-width: 1px !important;
+        border-color: #e9e9e9 !important;
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px;
+        padding-left: 1rem !important;
+        margin-top: 1rem !important;
+      }
+      .rm-skill-cont {
+        display: block !important;
+      }
+      .rm-match-wrap {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+      @media (max-width: 767px) {
+        .rm-skill-cont {
+          display: flex !important;
+          flex-direction: column !important;
+        }
+      }
+      @media (max-width: 479px) {
+        .predictive-search.conversation-started {
+          padding: 0.5rem !important;
+          margin: 0.5rem !important;
+        }
+        .predictive-search {
+          resize: none !important;
+          overflow: hidden !important;
+          min-height: auto !important;
+          max-height: none !important;
+          height: auto !important;
+          line-height: normal !important;
+        }
+        .predictive-search.conversation-started {
+          overflow: hidden !important;
+          min-height: auto !important;
+          max-height: none !important;
+          height: auto !important;
+          line-height: normal !important;
+        }
+        #intent {
+          resize: none !important;
+          overflow: hidden !important;
+          min-height: auto !important;
+          max-height: none !important;
+          height: auto !important;
+          line-height: normal !important;
+          padding: 1rem !important;
+        }
+        .search-wrap {
+          max-height: none !important;
+          height: auto !important;
+        }
+        .search-wrap.wide {
+          max-height: none !important;
+          height: auto !important;
+        }
+      }
+      .global-reset::after {
+        content: "Reload";
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-bottom: 8px;
+        padding: 4px 8px;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        font-size: 12px;
+        border-radius: 4px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 1000;
+      }
+      .global-reset::before {
+        content: "";
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-bottom: 4px;
+        border: 4px solid transparent;
+        border-top-color: rgba(0, 0, 0, 0.8);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 1000;
+      }
+      .global-reset:hover::after,
+      .global-reset:hover::before {
+        opacity: 1;
+      }
+      .modal-close::after {
+        content: "Close";
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-bottom: 8px;
+        padding: 4px 8px;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        font-size: 12px;
+        border-radius: 4px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 1000;
+      }
+      .modal-close::before {
+        content: "";
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-bottom: 4px;
+        border: 4px solid transparent;
+        border-top-color: rgba(0, 0, 0, 0.8);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 1000;
+      }
+      .modal-close:hover::after,
+      .modal-close:hover::before {
+        opacity: 1;
+      }
+    `;
+    document.head.appendChild(style);
 
     const defaultPlaceholder = "Ask any workforce-related question, or select one of the quick-start examples below.";
     if (input) input.placeholder = defaultPlaceholder;
@@ -373,9 +469,9 @@ document.addEventListener("DOMContentLoaded", () => {
         input.readOnly = false;
       }
       if (intentInput) {
-        intentInput.value = "";
-        intentInput.classList.remove("conversation-started");
         intentInput.readOnly = false;
+      }
+      if (intentInput) {
         intentInput.style.width = "auto";
       }
       if (qaBody) {
@@ -659,7 +755,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return result.innerHTML;
     }
 
-    function typeAnswerText(el, text, speed = 0.016, done) {
+    function typeAnswerText(el, text, speed = 0.02, done) {
       if (currentTypingAnimation) {
         currentTypingAnimation.kill();
       }
@@ -859,7 +955,7 @@ document.addEventListener("DOMContentLoaded", () => {
       answerTextContainer.className = "answer-text-container";
       qaBody.appendChild(answerTextContainer);
       
-      typeAnswerText(answerTextContainer, text, 0.016, () => {
+      typeAnswerText(answerTextContainer, text, 0.02, () => {
         showRichMedia();
       });
     }
@@ -1012,7 +1108,6 @@ document.addEventListener("DOMContentLoaded", () => {
       
       console.log("Question selected, showing modal close");
       
-      // Add classes immediately so CSS transition animates
       input.classList.add("conversation-started");
       isProgrammaticChange = true;
       input.value = qText;
@@ -1026,7 +1121,6 @@ document.addEventListener("DOMContentLoaded", () => {
         intentInput.value = qText;
         const isMobile = window.innerWidth <= 479;
         intentInput.style.width = isMobile ? "85%" : "70%";
-        intentInput.classList.add("conversation-started");
         intentInput.readOnly = true;
         intentInput.disabled = false;
         setTimeout(() => {
@@ -1259,4 +1353,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })();
 });
-
+</script>

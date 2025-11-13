@@ -1,73 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
   (() => {
-    // Inject critical styles inline to override Webflow's CSS
-    const style = document.createElement("style");
-    style.textContent = `
-      .predictive-search.conversation-started,
-      .w-input.predictive-search.conversation-started,
-      .w-input[readonly].predictive-search.conversation-started,
-      .w-input[readonly].w-input.predictive-search.conversation-started {
-        background:rgb(255, 255, 255) !important;
-        background-color: rgb(255, 255, 255) !important;
-        border: 1px solid #A8A8A8 !important;
-        margin: 1rem;
-        padding: 1rem;
-        width: 80%;
-        border-radius: 0px 1rem 1rem 1rem;
-        transition: all 0.3s ease;
-        min-height: auto !important;
-        height: auto !important;
-      }
-      .predictive-search.conversation-started[readonly],
-      .predictive-search.conversation-started[readonly]:focus,
-      .w-input.predictive-search.conversation-started[readonly],
-      .w-input.predictive-search.conversation-started[readonly]:focus,
-      .w-input[readonly].predictive-search.conversation-started,
-      .w-input[readonly].predictive-search.conversation-started:focus,
-      .w-input[readonly].w-input.predictive-search.conversation-started,
-      .w-input[readonly].w-input.predictive-search.conversation-started:focus {
-        background:rgb(255, 255, 255) !important;
-        background-color: rgb(255, 255, 255) !important;
-        border: 1.5px solid #E0E0E0 !important;
-        outline: none !important;
-      }
-      #intent.conversation-started,
-      .w-input#intent.conversation-started,
-      .w-input[readonly]#intent.conversation-started,
-      .w-input[readonly].w-input#intent.conversation-started {
-        background:rgb(255, 255, 255) !important;
-        background-color: rgb(255, 255, 255) !important;
-        border: 1px solid #A8A8A8 !important;
-        margin: 1rem;
-        padding: 1rem;
-        width: 70%;
-        border-radius: 0px 1rem 1rem 1rem;
-        transition: all 0.3s ease;
-        min-height: auto !important;
-        height: auto !important;
-      }
-      #intent.conversation-started[readonly],
-      #intent.conversation-started[readonly]:focus,
-      .w-input#intent.conversation-started[readonly],
-      .w-input#intent.conversation-started[readonly]:focus,
-      .w-input[readonly]#intent.conversation-started,
-      .w-input[readonly]#intent.conversation-started:focus,
-      .w-input[readonly].w-input#intent.conversation-started,
-      .w-input[readonly].w-input#intent.conversation-started:focus {
-        background:rgb(255, 255, 255) !important;
-        background-color: rgb(255, 255, 255) !important;
-        border: 1.5px solid #E0E0E0 !important;
-        outline: none !important;
-      }
-      .predictive-search {
-        transition: all 0.3s ease;
-      }
-      #intent {
-        transition: all 0.3s ease;
-      }
-    `;
-    document.head.appendChild(style);
-
     const categories = document.querySelectorAll(".category-btn");
     const questions = document.querySelectorAll(".question-item");
     const categoriesContainer = document.querySelector(".categories-collection");
@@ -371,12 +303,34 @@ document.addEventListener("DOMContentLoaded", () => {
         input.placeholder = defaultPlaceholder;
         input.classList.remove("conversation-started");
         input.readOnly = false;
+        // Reset styles
+        gsap.to(input, {
+          margin: "",
+          padding: "",
+          width: "",
+          borderRadius: "",
+          backgroundColor: "",
+          border: "",
+          duration: 0.3,
+          ease: "power2.out"
+        });
       }
       if (intentInput) {
         intentInput.value = "";
         intentInput.classList.remove("conversation-started");
         intentInput.readOnly = false;
         intentInput.style.width = "auto";
+        // Reset styles
+        gsap.to(intentInput, {
+          margin: "",
+          padding: "",
+          width: "auto",
+          borderRadius: "",
+          backgroundColor: "",
+          border: "",
+          duration: 0.3,
+          ease: "power2.out"
+        });
       }
       if (qaBody) {
         qaBody.innerHTML = "";
@@ -659,7 +613,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return result.innerHTML;
     }
 
-    function typeAnswerText(el, text, speed = 0.016, done) {
+    function typeAnswerText(el, text, speed = 0.02, done) {
       if (currentTypingAnimation) {
         currentTypingAnimation.kill();
       }
@@ -859,7 +813,7 @@ document.addEventListener("DOMContentLoaded", () => {
       answerTextContainer.className = "answer-text-container";
       qaBody.appendChild(answerTextContainer);
       
-      typeAnswerText(answerTextContainer, text, 0.016, () => {
+      typeAnswerText(answerTextContainer, text, 0.02, () => {
         showRichMedia();
       });
     }
@@ -1012,8 +966,6 @@ document.addEventListener("DOMContentLoaded", () => {
       
       console.log("Question selected, showing modal close");
       
-      // Add classes immediately so CSS transition animates
-      input.classList.add("conversation-started");
       isProgrammaticChange = true;
       input.value = qText;
       input.placeholder = "";
@@ -1024,21 +976,52 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       if (intentInput) {
         intentInput.value = qText;
-        const isMobile = window.innerWidth <= 479;
-        intentInput.style.width = isMobile ? "85%" : "70%";
-        intentInput.classList.add("conversation-started");
         intentInput.readOnly = true;
         intentInput.disabled = false;
-        setTimeout(() => {
-          autoResizeTextarea(intentInput);
-          setTimeout(() => autoResizeTextarea(intentInput), 100);
-        }, 50);
       }
       
-      setTimeout(() => {
-        autoResizeTextarea(input);
-        setTimeout(() => autoResizeTextarea(input), 100);
-      }, 50);
+      // Animate input to chat bubble style
+      if (input) {
+        gsap.to(input, {
+          margin: "1rem",
+          padding: "1rem",
+          width: "80%",
+          borderRadius: "0px 1rem 1rem 1rem",
+          backgroundColor: "rgb(255, 255, 255)",
+          border: "1px solid #A8A8A8",
+          duration: 0.3,
+          ease: "power2.out",
+          onComplete: () => {
+            input.classList.add("conversation-started");
+            setTimeout(() => {
+              autoResizeTextarea(input);
+              setTimeout(() => autoResizeTextarea(input), 100);
+            }, 50);
+          }
+        });
+      }
+      
+      // Animate #intent to chat bubble style
+      if (intentInput) {
+        const isMobile = window.innerWidth <= 479;
+        gsap.to(intentInput, {
+          margin: "1rem",
+          padding: "1rem",
+          width: isMobile ? "85%" : "70%",
+          borderRadius: "0px 1rem 1rem 1rem",
+          backgroundColor: "rgb(255, 255, 255)",
+          border: "1px solid #A8A8A8",
+          duration: 0.3,
+          ease: "power2.out",
+          onComplete: () => {
+            intentInput.classList.add("conversation-started");
+            setTimeout(() => {
+              autoResizeTextarea(intentInput);
+              setTimeout(() => autoResizeTextarea(intentInput), 100);
+            }, 50);
+          }
+        });
+      }
       
       if (hintEl) {
         hintEl.textContent = "";
