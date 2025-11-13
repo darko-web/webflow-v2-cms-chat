@@ -529,27 +529,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const MAX_INPUT_LENGTH = 5000;
     
     async function sendToZapier(intentValue) {
+      console.log('🟢 sendToZapier called with:', intentValue);
       // Input validation
       if (!intentValue || typeof intentValue !== 'string') {
-        console.warn('Invalid input value');
+        console.warn('⚠️ Invalid input value:', intentValue, typeof intentValue);
         return;
       }
       
       const trimmedValue = intentValue.trim();
+      console.log('🟢 Trimmed value length:', trimmedValue.length, 'MIN:', MIN_INPUT_LENGTH, 'MAX:', MAX_INPUT_LENGTH);
       if (trimmedValue.length < MIN_INPUT_LENGTH || trimmedValue.length > MAX_INPUT_LENGTH) {
-        console.warn('Input length validation failed');
+        console.warn('⚠️ Input length validation failed:', trimmedValue.length);
         return;
       }
       
       // Rate limiting
       const now = Date.now();
-      if (now - lastSubmissionTime < RATE_LIMIT_MS) {
-        console.warn('Rate limit: Please wait before submitting again');
+      const timeSinceLastSubmission = now - lastSubmissionTime;
+      console.log('🟢 Rate limit check - time since last:', timeSinceLastSubmission, 'ms, limit:', RATE_LIMIT_MS);
+      if (timeSinceLastSubmission < RATE_LIMIT_MS) {
+        console.warn('⚠️ Rate limit: Please wait before submitting again. Wait', (RATE_LIMIT_MS - timeSinceLastSubmission) / 1000, 'more seconds');
         return;
       }
       
+      console.log('🟢 Submission count:', submissionCount, 'Max:', MAX_SUBMISSIONS_PER_SESSION);
       if (submissionCount >= MAX_SUBMISSIONS_PER_SESSION) {
-        console.warn('Rate limit: Maximum submissions reached for this session');
+        console.warn('⚠️ Rate limit: Maximum submissions reached for this session');
         return;
       }
       
@@ -647,8 +652,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function handleSubmitFlow() {
+      console.log('🔵 handleSubmitFlow called');
       const value = input.value.trim();
-      if (!value) return;
+      console.log('🔵 Input value:', value);
+      if (!value) {
+        console.warn('⚠️ No value to submit');
+        return;
+      }
       submitBtn.disabled = true;
       submitBtn.style.opacity = "0";
       setTimeout(() => (submitBtn.style.display = "none"), 200);
@@ -658,6 +668,7 @@ document.addEventListener("DOMContentLoaded", () => {
         hintEl.style.opacity = "0";
       }
       
+      console.log('🔵 Calling sendToZapier with value:', value);
       await sendToZapier(value);
       showThinkingState();
       setTimeout(() => {
