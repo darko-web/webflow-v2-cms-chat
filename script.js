@@ -530,13 +530,21 @@ document.addEventListener("DOMContentLoaded", () => {
     
     async function sendToZapier(intentValue) {
       console.log('🟢 sendToZapier called with:', intentValue);
-      // Input validation
+      
+      // Strict validation - block empty submissions
       if (!intentValue || typeof intentValue !== 'string') {
-        console.warn('⚠️ Invalid input value:', intentValue, typeof intentValue);
+        console.warn('⚠️ Invalid input value - BLOCKING EMPTY SUBMISSION:', intentValue, typeof intentValue);
         return;
       }
       
       const trimmedValue = intentValue.trim();
+      
+      // Block empty strings
+      if (trimmedValue.length === 0) {
+        console.warn('⚠️ Empty string after trim - BLOCKING EMPTY SUBMISSION');
+        return;
+      }
+      
       console.log('🟢 Trimmed value length:', trimmedValue.length, 'MIN:', MIN_INPUT_LENGTH, 'MAX:', MAX_INPUT_LENGTH);
       if (trimmedValue.length < MIN_INPUT_LENGTH || trimmedValue.length > MAX_INPUT_LENGTH) {
         console.warn('⚠️ Input length validation failed:', trimmedValue.length);
@@ -677,14 +685,29 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // Prevent duplicate submissions
+    let isSubmitting = false;
+    
     async function handleSubmitFlow() {
+      // Prevent duplicate calls
+      if (isSubmitting) {
+        console.warn('⚠️ Submission already in progress, ignoring duplicate call');
+        return;
+      }
+      
       console.log('🔵 handleSubmitFlow called');
       const value = input.value.trim();
       console.log('🔵 Input value:', value);
-      if (!value) {
-        console.warn('⚠️ No value to submit');
+      
+      // Strict validation - must have content
+      if (!value || value.length === 0) {
+        console.warn('⚠️ No value to submit - blocking empty submission');
         return;
       }
+      
+      // Set flag to prevent duplicates
+      isSubmitting = true;
+      
       submitBtn.disabled = true;
       submitBtn.style.opacity = "0";
       setTimeout(() => (submitBtn.style.display = "none"), 200);
@@ -695,7 +718,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       
       console.log('🔵 Calling sendToZapier with value:', value);
-      await sendToZapier(value);
+      try {
+        await sendToZapier(value);
+      } finally {
+        // Reset flag after a delay to allow for navigation
+        setTimeout(() => {
+          isSubmitting = false;
+        }, 2000);
+      }
       showThinkingState();
       setTimeout(() => {
         if (loadingEl) gsap.to(loadingEl, { opacity: 0, duration: 0.3 });
@@ -704,15 +734,37 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 1500);
     }
 
-    submitBtn.addEventListener("click", () => {
+    // Prevent any form submission if there's a form wrapper
+    const formElement = input?.closest('form');
+    if (formElement) {
+      formElement.addEventListener("submit", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('🛑 Prevented default form submission');
+        const formValue = input.value.trim();
+        if (formValue && formValue.length >= MIN_INPUT_LENGTH) {
+          handleSubmitFlow();
+        } else {
+          console.warn('⚠️ Form submission blocked - empty or invalid input');
+        }
+        return false;
+      });
+    }
+    
+    submitBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       handleSubmitFlow();
+      return false;
     });
 
     if (input) {
       input.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
           e.preventDefault();
+          e.stopPropagation();
           handleSubmitFlow();
+          return false;
         }
       });
     }
