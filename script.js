@@ -1,5 +1,73 @@
 document.addEventListener("DOMContentLoaded", () => {
   (() => {
+    // Inject critical styles inline to override Webflow's CSS
+    const style = document.createElement("style");
+    style.textContent = `
+      .predictive-search.conversation-started,
+      .w-input.predictive-search.conversation-started,
+      .w-input[readonly].predictive-search.conversation-started,
+      .w-input[readonly].w-input.predictive-search.conversation-started {
+        background:rgb(255, 255, 255) !important;
+        background-color: rgb(255, 255, 255) !important;
+        border: 1px solid #A8A8A8 !important;
+        margin: 1rem;
+        padding: 1rem;
+        width: 80%;
+        border-radius: 0px 1rem 1rem 1rem;
+        transition: all 0.3s ease;
+        min-height: auto !important;
+        height: auto !important;
+      }
+      .predictive-search.conversation-started[readonly],
+      .predictive-search.conversation-started[readonly]:focus,
+      .w-input.predictive-search.conversation-started[readonly],
+      .w-input.predictive-search.conversation-started[readonly]:focus,
+      .w-input[readonly].predictive-search.conversation-started,
+      .w-input[readonly].predictive-search.conversation-started:focus,
+      .w-input[readonly].w-input.predictive-search.conversation-started,
+      .w-input[readonly].w-input.predictive-search.conversation-started:focus {
+        background:rgb(255, 255, 255) !important;
+        background-color: rgb(255, 255, 255) !important;
+        border: 1.5px solid #E0E0E0 !important;
+        outline: none !important;
+      }
+      #intent.conversation-started,
+      .w-input#intent.conversation-started,
+      .w-input[readonly]#intent.conversation-started,
+      .w-input[readonly].w-input#intent.conversation-started {
+        background:rgb(255, 255, 255) !important;
+        background-color: rgb(255, 255, 255) !important;
+        border: 1px solid #A8A8A8 !important;
+        margin: 1rem;
+        padding: 1rem;
+        width: 70%;
+        border-radius: 0px 1rem 1rem 1rem;
+        transition: all 0.3s ease;
+        min-height: auto !important;
+        height: auto !important;
+      }
+      #intent.conversation-started[readonly],
+      #intent.conversation-started[readonly]:focus,
+      .w-input#intent.conversation-started[readonly],
+      .w-input#intent.conversation-started[readonly]:focus,
+      .w-input[readonly]#intent.conversation-started,
+      .w-input[readonly]#intent.conversation-started:focus,
+      .w-input[readonly].w-input#intent.conversation-started,
+      .w-input[readonly].w-input#intent.conversation-started:focus {
+        background:rgb(255, 255, 255) !important;
+        background-color: rgb(255, 255, 255) !important;
+        border: 1.5px solid #E0E0E0 !important;
+        outline: none !important;
+      }
+      .predictive-search {
+        transition: all 0.3s ease;
+      }
+      #intent {
+        transition: all 0.3s ease;
+      }
+    `;
+    document.head.appendChild(style);
+
     const categories = document.querySelectorAll(".category-btn");
     const questions = document.querySelectorAll(".question-item");
     const categoriesContainer = document.querySelector(".categories-collection");
