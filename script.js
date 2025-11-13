@@ -519,12 +519,51 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const ZAPIER_URL = "https://hooks.zapier.com/hooks/catch/https://hooks.zapier.com/hooks/catch/7023140/uiwb1ix//";
+    
+    // Rate limiting and security
+    let lastSubmissionTime = 0;
+    let submissionCount = 0;
+    const RATE_LIMIT_MS = 5000; // 5 seconds between submissions
+    const MAX_SUBMISSIONS_PER_SESSION = 10;
+    const MIN_INPUT_LENGTH = 5;
+    const MAX_INPUT_LENGTH = 5000;
+    
     async function sendToZapier(intentValue) {
+      // Input validation
+      if (!intentValue || typeof intentValue !== 'string') {
+        console.warn('Invalid input value');
+        return;
+      }
+      
+      const trimmedValue = intentValue.trim();
+      if (trimmedValue.length < MIN_INPUT_LENGTH || trimmedValue.length > MAX_INPUT_LENGTH) {
+        console.warn('Input length validation failed');
+        return;
+      }
+      
+      // Rate limiting
+      const now = Date.now();
+      if (now - lastSubmissionTime < RATE_LIMIT_MS) {
+        console.warn('Rate limit: Please wait before submitting again');
+        return;
+      }
+      
+      if (submissionCount >= MAX_SUBMISSIONS_PER_SESSION) {
+        console.warn('Rate limit: Maximum submissions reached for this session');
+        return;
+      }
+      
+      // Update rate limiting counters
+      lastSubmissionTime = now;
+      submissionCount++;
+      
       const params = new URLSearchParams({
-        intent: intentValue,
+        intent: trimmedValue,
         timestamp: new Date().toISOString(),
         source: "Everday Webflow Chat Form",
+        session_id: sessionStorage.getItem('chat_session_id') || 'unknown',
       });
+      
       try {
         await fetch(ZAPIER_URL, {
           method: "POST",
@@ -533,7 +572,14 @@ document.addEventListener("DOMContentLoaded", () => {
           body: params.toString(),
           keepalive: true,
         });
-      } catch (err) {}
+      } catch (err) {
+        console.error('Failed to send to Zapier:', err);
+      }
+    }
+    
+    // Initialize session ID for tracking
+    if (!sessionStorage.getItem('chat_session_id')) {
+      sessionStorage.setItem('chat_session_id', Date.now().toString(36) + Math.random().toString(36).substr(2));
     }
 
     function showThinkingState() {
