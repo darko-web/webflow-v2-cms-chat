@@ -574,22 +574,51 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const response = await fetch(ZAPIER_URL, {
           method: "POST",
-          mode: "no-cors",
+          mode: "cors",
           headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
           body: params.toString(),
           keepalive: true,
         });
         
-        // With no-cors, we can't read response, but fetch will succeed if request was sent
-        console.log('✅ Request sent to Zapier (no-cors mode - response not readable)');
-        console.log('📋 Check Zapier dashboard to see if webhook received the data');
+        if (response.ok) {
+          const responseData = await response.text();
+          console.log('✅ Zapier webhook successful!', {
+            status: response.status,
+            statusText: response.statusText,
+            response: responseData
+          });
+        } else {
+          console.error('❌ Zapier webhook error:', {
+            status: response.status,
+            statusText: response.statusText,
+            url: ZAPIER_URL
+          });
+          const errorText = await response.text();
+          console.error('Error response:', errorText);
+        }
       } catch (err) {
         console.error('❌ Failed to send to Zapier:', err);
         console.error('Error details:', {
           message: err.message,
+          name: err.name,
           stack: err.stack,
           url: ZAPIER_URL
         });
+        
+        // If CORS fails, try with no-cors as fallback
+        console.log('⚠️ Trying fallback with no-cors mode...');
+        try {
+          await fetch(ZAPIER_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+            body: params.toString(),
+            keepalive: true,
+          });
+          console.log('📤 Request sent (no-cors fallback - check Zapier dashboard)');
+        } catch (fallbackErr) {
+          console.error('❌ Fallback also failed:', fallbackErr);
+        }
       }
     }
     
