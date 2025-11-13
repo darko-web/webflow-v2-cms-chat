@@ -592,12 +592,15 @@ document.addEventListener("DOMContentLoaded", () => {
         viewport_height: window.innerHeight.toString(),
       });
       
+      const payloadData = Object.fromEntries(params);
       console.log('🚀 Sending to Zapier:', {
         url: ZAPIER_URL,
-        data: Object.fromEntries(params),
+        data: payloadData,
         body: params.toString(),
         timestamp: new Date().toISOString()
       });
+      console.log('📦 Full payload details:', payloadData);
+      console.log('🔍 Payload keys:', Object.keys(payloadData));
       
       try {
         const response = await fetch(ZAPIER_URL, {
