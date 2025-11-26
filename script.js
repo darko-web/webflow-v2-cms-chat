@@ -730,7 +730,20 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => {
         if (loadingEl) gsap.to(loadingEl, { opacity: 0, duration: 0.3 });
         if (statusLine) gsap.to(statusLine, { opacity: 0, duration: 0.3 });
-        window.location.href = "https://onboarding.ever.day/organisation";
+        
+        // Determine UTM source based on current page
+        let utmSource = "home";
+        const path = window.location.pathname;
+        
+        if (path.includes("engineering-teams")) {
+          utmSource = "eng_lp";
+        } else if (path.includes("sales-teams")) {
+          utmSource = "sales_lp";
+        } else if (path.includes("customer-success-teams")) {
+          utmSource = "cs_lp";
+        }
+        
+        window.location.href = `https://onboarding.ever.day/organisation?utm_source=${utmSource}&utm_medium=custom_question&utm_content=ask_everday`;
       }, 1500);
     }
 
